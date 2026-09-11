@@ -76,7 +76,7 @@ body {
   height: 20px;
   padding: 3px 4px;
   border-radius: 999px;
-  background: var(--primary-grad);
+  /* background: var(--primary-grad); */
 }
 
 .brand-eq span {
