@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.http import HttpResponse
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from twilio.request_validator import RequestValidator
 from twilio.twiml.voice_response import VoiceResponse
 
@@ -25,12 +27,13 @@ _TWILIO_STATUS_MAP = {
 def _valid(request, account):
     validator = RequestValidator(decrypt(account.auth_token_encrypted))
     return validator.validate(
-        request.build_absolute_uri(),
+        f"{settings.PUBLIC_BASE_URL}{request.path}",
         request.POST,
         request.META.get("HTTP_X_TWILIO_SIGNATURE", ""),
     )
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class VoiceWebhookView(View):
     def post(self, request, phone_number_id):
         phone_number = (
@@ -49,6 +52,7 @@ class VoiceWebhookView(View):
         return HttpResponse(str(response), content_type="application/xml")
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class StatusCallbackView(View):
     def post(self, request, call_id):
         call = (

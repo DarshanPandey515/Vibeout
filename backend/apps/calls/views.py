@@ -1,11 +1,14 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.core.viewsets import TenantScopedViewSet
+from apps.telephony.twilio_client import TwilioRestException
 
+from .dialing import dial_lead, ensure_voice_webhook
 from .models import Call, CallOutcome, CallTranscript
 from .serializers import CallDetailSerializer, CallSerializer
 from .tokens import verify_call_token
@@ -41,6 +44,21 @@ class CallViewSet(TenantScopedViewSet):
         transcript = getattr(call, "transcript", None)
         turns = transcript.turns if transcript else []
         return Response({"turns": turns})
+
+    @action(detail=True, methods=["post"])
+    def retry(self, request, pk=None):
+        call = self.get_object()
+        if call.status not in ("failed", "busy", "no_answer", "canceled"):
+            raise ValidationError({"error": "call_not_retryable"})
+        try:
+            ensure_voice_webhook(call.campaign)
+        except TwilioRestException as exc:
+            raise ValidationError({"error": "webhook_config_failed", "detail": str(exc)})
+        attempt = call.campaign.calls.filter(lead=call.lead).count() + 1
+        new_call = dial_lead(request.org, call.campaign, call.lead, attempt)
+        if not new_call:
+            raise ValidationError({"error": "no_approved_context"})
+        return Response(CallSerializer(new_call).data, status=201)
 
 
 class InternalCallView(APIView):
