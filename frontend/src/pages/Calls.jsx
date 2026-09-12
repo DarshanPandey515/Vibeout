@@ -34,6 +34,17 @@ export default function Calls() {
     if (selected) showTranscript(selected)
   }, [selected])
 
+  async function retry(callId) {
+    setLoadingTranscript(false)
+    setTranscriptError('')
+    try {
+      await api(`/calls/${callId}/retry/`, { method: 'POST' })
+      await reload()
+    } catch (err) {
+      setTranscriptError(err.message)
+    }
+  }
+
   return (
     <section>
       <PageHeader title="Calls" subtitle="History and transcripts for this organization" />
@@ -75,6 +86,11 @@ export default function Calls() {
                     >
                       Transcript
                     </Button>
+                    {['failed', 'busy', 'no_answer', 'canceled'].includes(c.status) && (
+                      <Button className="btn-sm" onClick={() => retry(c.id)}>
+                        Retry
+                      </Button>
+                    )}
                   </td>
                 </tr>
               ))}

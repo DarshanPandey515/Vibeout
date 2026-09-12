@@ -8,15 +8,18 @@ import { useAsync } from '../hooks'
 
 export default function Campaigns() {
   const { org } = useAuth()
-  const { data, loading, error, reload } = useAsync(
+  const { data, loading, reload } = useAsync(
     () =>
-      Promise.all([api('/campaigns/'), api('/agents/'), api('/telephony/phone-numbers/')]).then(
-        ([campaigns, agents, numbers]) => ({
-          campaigns: campaigns.results,
-          agents: agents.results,
-          numbers: numbers.results,
-        }),
-      ),
+      Promise.allSettled([
+        api('/campaigns/').then((r) => r.results),
+        api('/agents/').then((r) => r.results),
+        api('/telephony/phone-numbers/').then((r) => r.results),
+      ]).then(([campaigns, agents, numbers]) => ({
+        campaigns: campaigns.status === 'fulfilled' ? campaigns.value : [],
+        agents: agents.status === 'fulfilled' ? agents.value : [],
+        numbers: numbers.status === 'fulfilled' ? numbers.value : [],
+        campaignsError: campaigns.status === 'rejected' ? campaigns.reason.message : '',
+      })),
     [org],
   )
   const [name, setName] = useState('')
@@ -24,6 +27,13 @@ export default function Campaigns() {
   const [numberId, setNumberId] = useState('')
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
+
+  const campaigns = data?.campaigns || []
+  const agents = data?.agents || []
+  const numbers = data?.numbers || []
+  const tableError = data?.campaignsError || ''
+  const noNumbers = !numbers.length
+  const noAgents = !agents.length
 
   async function create(e) {
     e.preventDefault()
@@ -44,12 +54,6 @@ export default function Campaigns() {
       setSaving(false)
     }
   }
-
-  const agents = data?.agents || []
-  const numbers = data?.numbers || []
-  const campaigns = data?.campaigns || []
-  const noNumbers = !numbers.length
-  const noAgents = !agents.length
 
   return (
     <section>
@@ -81,11 +85,11 @@ export default function Campaigns() {
               </select>
             </Field>
           </div>
-          {noAgents && <Alert error="No agents yet — create one on the Agents page first." />}
-          {noNumbers && <Alert error="No caller numbers — connect Twilio and sync numbers on the Telephony page first." />}
+          {!loading && noAgents && <Alert error="No agents yet — create one on the Agents page first." />}
+          {!loading && noNumbers && <Alert error="No caller numbers — connect Twilio and sync numbers on the Telephony page first." />}
           {formError && <Alert error={formError} />}
           <div className="form-actions">
-            <Button type="submit" loading={saving} disabled={noAgents || noNumbers}>
+            <Button type="submit" loading={saving} disabled={!loading && (noAgents || noNumbers)}>
               Create campaign
             </Button>
           </div>
@@ -93,7 +97,7 @@ export default function Campaigns() {
       </Card>
       <StateCenter
         loading={loading}
-        error={error}
+        error={tableError}
         onRetry={reload}
         empty={
           campaigns.length

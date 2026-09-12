@@ -151,6 +151,19 @@ export default function CampaignDetail() {
     }
   }
 
+  async function retry(callId) {
+    setBusy(`retry:${callId}`)
+    setPageError('')
+    try {
+      await api(`/calls/${callId}/retry/`, { method: 'POST' })
+      await reload()
+    } catch (err) {
+      setPageError(err.message)
+    } finally {
+      setBusy('')
+    }
+  }
+
   if (loading) {
     return (
       <div className="state-center">
@@ -254,6 +267,7 @@ export default function CampaignDetail() {
               <th>Status</th>
               <th>Outcome</th>
               <th>Started</th>
+              <th className="text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -270,11 +284,18 @@ export default function CampaignDetail() {
                   </td>
                   <td className="muted">{c.outcome || '—'}</td>
                   <td className="muted">{c.started_at ? new Date(c.started_at).toLocaleString() : '—'}</td>
+                  <td className="text-right">
+                    {['failed', 'busy', 'no_answer', 'canceled'].includes(c.status) && (
+                      <Button className="btn-sm" loading={busy === `retry:${c.id}`} onClick={() => retry(c.id)}>
+                        Retry
+                      </Button>
+                    )}
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={4}>
+                <td colSpan={5}>
                   <EmptyState title="No calls yet" hint="Start the campaign to dial call-ready leads." />
                 </td>
               </tr>

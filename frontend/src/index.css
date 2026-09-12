@@ -1,25 +1,26 @@
 :root {
-  --bg-grad: radial-gradient(1200px 800px at 20% -10%, #1e293b, #0f172a 55%, #020617);
-  --app-bg: #0b1220;
-  --panel: #0d1526;
-  --panel-2: #111c33;
-  --border: #1e293b;
-  --border-strong: #334155;
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --panel: #ffffff;
+  --panel-2: #f7f8fa;
+  --border: #e3e6ea;
+  --border-strong: #d0d5dc;
   --primary-a: #1d4ed8;
   --primary-b: #3b82f6;
   --primary-grad: linear-gradient(135deg, #1d4ed8, #3b82f6);
-  --accent: #60a5fa;
-  --accent-2: #93c5fd;
-  --accent-3: #bfdbfe;
-  --success: #4ade80;
+  --accent: #2563eb;
+  --accent-2: #1d4ed8;
+  --accent-soft: #eff4ff;
+  --success: #16a34a;
   --danger: #dc2626;
-  --text: #e2e8f0;
-  --muted: #94a3b8;
-  --muted-2: #64748b;
+  --amber: #d97706;
+  --text: #1a202c;
+  --muted: #6b7280;
+  --muted-2: #9aa1ab;
   --radius-app: 24px;
   --radius-panel: 16px;
   --radius-ctrl: 10px;
-  --shadow: 0 8px 24px rgba(2, 6, 23, 0.5);
+  --shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
   --font: 14px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 
@@ -31,8 +32,7 @@ body {
   margin: 0;
   font: var(--font);
   color: var(--text);
-  background: var(--bg-grad);
-  background-attachment: fixed;
+  background: var(--bg);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -44,7 +44,7 @@ body {
 .sidebar {
   width: 220px;
   flex-shrink: 0;
-  background: var(--app-bg);
+  background: var(--surface);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -76,13 +76,13 @@ body {
   height: 20px;
   padding: 3px 4px;
   border-radius: 999px;
-  /* background: var(--primary-grad); */
+  background: var(--accent-soft);
 }
 
 .brand-eq span {
   width: 3px;
   border-radius: 2px;
-  background: #fff;
+  background: var(--accent);
   animation: eq-bounce 1s ease-in-out infinite;
 }
 
@@ -109,12 +109,12 @@ body {
 }
 
 .nav-item:hover {
-  background: rgba(148, 163, 184, 0.08);
+  background: var(--panel-2);
   color: var(--text);
 }
 
 .nav-item.active {
-  background: rgba(96, 165, 250, 0.12);
+  background: var(--accent-soft);
   color: var(--accent-2);
 }
 
@@ -181,7 +181,7 @@ section {
 }
 
 .card {
-  background: var(--panel);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow);
@@ -222,7 +222,7 @@ textarea {
   font: inherit;
   font-size: 0.92rem;
   color: var(--text);
-  background: var(--app-bg);
+  background: var(--surface);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-ctrl);
   padding: 8px 10px;
@@ -234,7 +234,7 @@ input:focus,
 select:focus,
 textarea:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 textarea {
@@ -256,7 +256,7 @@ textarea {
   padding: 8px 14px;
   border-radius: var(--radius-ctrl);
   border: 1px solid var(--border-strong);
-  background: var(--panel-2);
+  background: var(--surface);
   color: var(--text);
   font: inherit;
   font-weight: 500;
@@ -266,7 +266,8 @@ textarea {
 }
 
 .btn:hover:not(:disabled) {
-  filter: brightness(1.15);
+  border-color: #b8c0c9;
+  background: var(--panel-2);
 }
 
 .btn:active:not(:disabled) {
@@ -282,11 +283,12 @@ textarea {
   background: var(--primary-grad);
   border-color: transparent;
   color: #fff;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
-  filter: brightness(1.1);
+  filter: brightness(1.08);
+  background: var(--primary-grad);
 }
 
 .btn-ghost {
@@ -296,8 +298,9 @@ textarea {
 }
 
 .btn-ghost:hover:not(:disabled) {
-  background: rgba(148, 163, 184, 0.1);
+  background: var(--panel-2);
   color: var(--text);
+  border-color: transparent;
 }
 
 .btn-sm {
@@ -360,9 +363,9 @@ textarea {
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  background: rgba(220, 38, 38, 0.12);
-  color: #fca5a5;
-  border: 1px solid rgba(220, 38, 38, 0.35);
+  background: #fdecec;
+  color: var(--danger);
+  border: 1px solid #f5c2c2;
   border-radius: 10px;
   padding: 8px 12px;
   font-size: 0.85rem;
@@ -385,7 +388,7 @@ textarea {
   color: var(--muted);
   border: 1px dashed var(--border-strong);
   border-radius: var(--radius-panel);
-  background: var(--panel);
+  background: var(--surface);
 }
 
 .empty-title {
@@ -416,8 +419,8 @@ textarea {
   border-radius: 999px;
   font-size: 0.8rem;
   font-weight: 600;
-  background: rgba(148, 163, 184, 0.15);
-  color: var(--muted);
+  background: #eef0f3;
+  color: #4b5563;
   white-space: nowrap;
 }
 
@@ -436,7 +439,7 @@ textarea {
 .badge-in-progress,
 .badge-queued,
 .badge-connecting {
-  background: rgba(96, 165, 250, 0.15);
+  background: var(--accent-soft);
   color: var(--accent-2);
 }
 
@@ -446,20 +449,21 @@ textarea {
 .badge-active,
 .badge-connected,
 .badge-succeeded {
-  background: rgba(74, 222, 128, 0.15);
+  background: #e9f9ef;
   color: var(--success);
 }
 
 .badge-failed {
-  background: rgba(220, 38, 38, 0.15);
-  color: #f87171;
+  background: var(--accent-soft);
+  color: var(--danger);
+  background: #fdecec;
 }
 
 .badge-paused,
 .badge-needs-review,
 .badge-busy {
-  background: rgba(251, 191, 36, 0.15);
-  color: #fbbf24;
+  background: #fdf3e0;
+  color: var(--amber);
 }
 
 .badge-imported,
@@ -467,12 +471,12 @@ textarea {
 .badge-canceled,
 .badge-inactive,
 .badge-draft {
-  background: rgba(148, 163, 184, 0.15);
-  color: var(--muted);
+  background: #eef0f3;
+  color: #4b5563;
 }
 
 .table-wrap {
-  background: var(--panel);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow);
@@ -497,7 +501,7 @@ th {
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--muted-2);
-  background: rgba(2, 6, 23, 0.4);
+  background: #fafbfc;
   font-weight: 600;
 }
 
@@ -506,7 +510,7 @@ tbody tr:last-child td {
 }
 
 tbody tr:hover td {
-  background: rgba(148, 163, 184, 0.05);
+  background: #fafbfc;
 }
 
 .text-right {
@@ -534,7 +538,7 @@ tbody tr:hover td {
 }
 
 .link {
-  color: var(--accent-2);
+  color: var(--accent);
   text-decoration: none;
   font-weight: 500;
 }
@@ -555,7 +559,7 @@ tbody tr:hover td {
 }
 
 .drawer {
-  background: var(--panel);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow);
@@ -645,7 +649,7 @@ tbody tr:hover td {
 }
 
 .row-active td {
-  background: rgba(96, 165, 250, 0.08);
+  background: var(--accent-soft);
 }
 
 .auth {
@@ -658,10 +662,10 @@ tbody tr:hover td {
 
 .auth-card {
   width: 360px;
-  background: var(--panel);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-app);
-  box-shadow: 0 12px 32px rgba(2, 6, 23, 0.6);
+  box-shadow: 0 12px 32px rgba(16, 24, 40, 0.12);
   padding: 28px;
   animation: rise-in 0.35s ease both;
 }
