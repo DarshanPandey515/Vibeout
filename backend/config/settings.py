@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env(
     DEBUG=(bool, False),
     MAX_UPLOAD_SIZE_MB=(int, 20),
-    GROQ_LLM_MODEL=(str, "llama-3.3-70b-versatile"),
+    GROQ_LLM_MODEL=(str, "openai/gpt-oss-20b"),
 )
 environ.Env.read_env(BASE_DIR / ".env")
 
@@ -124,5 +124,8 @@ GROQ_LLM_MODEL = env("GROQ_LLM_MODEL")
 GROQ_REASONING_EFFORT = env("GROQ_REASONING_EFFORT", default="low")
 
 LIVEKIT_SIP_URI = env("LIVEKIT_SIP_URI", default="")
+LIVEKIT_URL = env("LIVEKIT_URL", default="")
+LIVEKIT_API_KEY = env("LIVEKIT_API_KEY", default="")
+LIVEKIT_API_SECRET = env("LIVEKIT_API_SECRET", default="")
 
 MAX_UPLOAD_SIZE_MB = env("MAX_UPLOAD_SIZE_MB")

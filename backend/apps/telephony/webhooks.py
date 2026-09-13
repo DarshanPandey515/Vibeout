@@ -44,8 +44,12 @@ class VoiceWebhookView(View):
         if not phone_number or not _valid(request, phone_number.twilio_account):
             return HttpResponse(status=403)
         response = VoiceResponse()
-        if settings.LIVEKIT_SIP_URI:
-            response.dial().sip(settings.LIVEKIT_SIP_URI)
+        call = Call.objects.filter(
+            twilio_call_sid=request.POST.get("CallSid", "")
+        ).first()
+        host = settings.LIVEKIT_SIP_URI.removeprefix("sip:")
+        if settings.LIVEKIT_SIP_URI and call and call.livekit_room_name:
+            response.dial().sip(f"sip:{call.livekit_room_name}@{host}")
         else:
             response.say("The line is currently unavailable. Goodbye.")
             response.hangup()

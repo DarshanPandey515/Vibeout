@@ -3,7 +3,9 @@ import json
 from django.conf import settings
 from django.http import JsonResponse
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from qstash import Receiver
 from qstash.errors import SignatureError
 
@@ -28,6 +30,7 @@ def execute_run(run, payload):
     run.save(update_fields=["status", "finished_at"])
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class SignedJobView(View):
     def post(self, request, *args, **kwargs):
         body = request.body.decode("utf-8")
